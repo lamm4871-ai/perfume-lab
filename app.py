@@ -1,6 +1,17 @@
 import streamlit as st
+import speech_recognition as sr
+from gtts import gTTS
+from io import BytesIO
+from google import genai
+from google.genai import types
+@st.cache_resource
+def tao_gemini():
+    return genai.Client(
+        api_key=st.secrets["GEMINI_API_KEY"]
+    )
 
 st.set_page_config(page_title="Perfume Lab", page_icon="🌸")
+gemini = tao_gemini()
 
 st.title("🌸 PERFUME LAB")
 st.write("Ứng dụng thiết kế nước hoa cá nhân hóa")
@@ -168,3 +179,103 @@ st.caption(
     "Hồ sơ mùi chỉ là mô tả dự kiến dựa trên tỉ lệ, "
     "không thay thế kết quả thử mùi thực tế."
 )
+
+
+st.divider()
+st.header("7. 🌸 Trợ lý nước hoa PERFUME LAB")
+
+che_do = st.radio(
+    "Bạn muốn tương tác bằng cách nào?",
+    ["💬 Chat", "🎙️ Voice"],
+    horizontal=True
+)
+
+if che_do == "💬 Chat":
+    st.subheader("💬 Chat với trợ lý nước hoa")
+
+    cau_hoi = st.chat_input("Hỏi tui về nước hoa nha...")
+
+    if cau_hoi:
+        st.chat_message("user").write(cau_hoi)
+        try:
+            phan_hoi = gemini.models.generate_content(
+                model="gemini-3.5-flash-lite",
+                contents=cau_hoi,
+                config=types.GenerateContentConfig(
+                                         
+                    system_instruction=(
+                        "Bạn là trợ lý PERFUME LAB. "
+                        "Hãy tư vấn kiến thức nước hoa bằng tiếng Việt, "
+                        "thân thiện, dễ hiểu và ngắn gọn. "
+                        "Giải thích về hương chanh, bạc hà, cỏ hương bài "
+                        "và cách lựa chọn mùi hương. "
+                        "Không tự khẳng định công thức pha chế an toàn "
+                        "nếu chưa có dữ liệu kiểm định."
+                    )
+                )
+            )
+
+            tra_loi = phan_hoi.text
+            st.chat_message("assistant").write(tra_loi)
+
+        except Exception as e:
+            st.error(f"Không kết nối được Gemini: {e}")
+
+else:
+    st.subheader("🎙️ Trò chuyện bằng giọng nói")
+    
+    ghi_am = st.audio_input("🎤 Nhấn để nói chuyện")
+
+    if ghi_am is not None:
+        st.audio(ghi_am)
+
+        try:
+            nhan_dien = sr.Recognizer()
+
+            am_thanh = sr.AudioFile(ghi_am)
+            with am_thanh as nguon:
+                du_lieu = nhan_dien.record(nguon)
+
+            cau_noi = nhan_dien.recognize_google(
+                du_lieu,
+                language="vi-VN"
+            )
+
+            st.success("🎤 Bạn vừa nói:")
+            st.write(cau_noi)
+
+            phan_hoi = gemini.models.generate_content(
+                model="gemini-3.5-flash-lite",
+                contents=cau_noi,
+                config=types.GenerateContentConfig(
+                    system_instruction=(
+                        "Bạn là trợ lý nước hoa PERFUME LAB. "
+                        "Hãy trả lời bằng tiếng Việt, thân thiện, "
+                        "ngắn gọn, dễ hiểu, phù hợp để đọc thành tiếng. "
+                        "Không khẳng định công thức pha chế an toàn "
+                        "nếu chưa có dữ liệu kiểm định."
+                    )
+                )
+            )
+            tra_loi = phan_hoi.text
+            st.write("🤖 Trợ lý:", tra_loi)
+            try:
+                giong_noi = gTTS(text=tra_loi, lang="vi")
+
+                am_thanh_mp3 = BytesIO()
+                giong_noi.write_to_fp(am_thanh_mp3)
+                am_thanh_mp3.seek(0)
+
+                st.audio(am_thanh_mp3, format="audio/mp3")
+
+            except Exception as e:
+                st.warning(f"Không tạo được giọng nói: {e}")
+
+        except sr.UnknownValueError:
+            st.warning("Không nghe rõ. Bạn thử nói lại nha!")
+
+        except sr.RequestError:
+            st.error("Không kết nối được dịch vụ nhận diện giọng nói.")
+
+        except Exception as e:
+            st.error(f"Có lỗi xảy ra: {e}")
