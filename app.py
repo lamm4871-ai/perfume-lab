@@ -21,16 +21,16 @@ st.divider()
 
 st.header("1. Sản phẩm của nhóm")
 
-st.success("Mẫu B - Sản phẩm đã pha chế thành công!")
+st.success("Mẫu B - Sản phẩm chính của nhóm!")
 
-st.write("Công thức thực hành của nhóm:")
+st.write("Công thức thực nghiệm mẫu B (thể tích mục tiêu 20 ml):")
 
 st.table({
     "Nguyên liệu": [
         "Tinh dầu chanh",
         "Tinh dầu bạc hà",
         "Tinh dầu cỏ hương bài",
-        "Ethanol",
+        "Ethanol 90°",
         "Nước cất"
     ],
     "Lượng sử dụng": [
@@ -42,9 +42,39 @@ st.table({
     ]
 })
 
-st.caption("Theo phép đo của nhóm: 1 giọt ≈ 0.04 ml.")
+st.caption("Theo phép đo thực tế của nhóm: 1 giọt ≈ 0.04 ml.")
 
+st.info(
+    "Mẫu B được chọn làm sản phẩm chính vì có sự cân bằng "
+    "giữa hương chanh tươi mát, bạc hà sảng khoái "
+    "và cỏ hương bài tạo chiều sâu."
+)
 st.divider()
+
+st.subheader("🧪 So sánh các mẫu nước hoa")
+
+st.table({
+    "Mẫu thử": [
+        "Mẫu thử 1",
+        "Mẫu thử 2",
+        "Mẫu B",
+        "Mẫu C"
+    ],
+    "Kết quả": [
+        "Chưa thành công",
+        "Thành công",
+        "Thành công - được chọn",
+        "Thành công"
+    ],
+    "Nhận xét": [
+        "Hương cỏ hương bài quá nồng",
+        "Hương giữa chưa nổi bật",
+        "Ba tầng hương cân bằng",
+        "Hương chanh hơi lấn át"
+    ]
+})
+
+st.success("🌸 Mẫu B được chọn làm sản phẩm chính của nhóm.")
 
 st.header("2. Cá nhân hóa nước hoa")
 
@@ -68,11 +98,11 @@ the_tich = st.number_input(
     value=20.0
 )
 
-st.subheader("Điều chỉnh 3 tầng hương")
+st.subheader("Thiết kế công thức lý thuyết - 3 tầng hương")
 
-chanh = st.slider("🍋 Hương đầu - Chanh (%)", 0.0, 10.0, 1.45, 0.05)
-bac_ha = st.slider("🌿 Hương giữa - Bạc hà (%)", 0.0, 10.0, 1.05, 0.05)
-vetiver = st.slider("🌳 Hương cuối - Cỏ hương bài (%)", 0.0, 10.0, 0.60, 0.05)
+chanh = st.slider("🍋 Hương đầu - Chanh (%)", 0.0, 10.0, 3.0, 0.05)
+bac_ha = st.slider("🌿 Hương giữa - Bạc hà (%)", 0.0, 10.0, 1.8, 0.05)
+vetiver = st.slider("🌳 Hương cuối - Cỏ hương bài (%)", 0.0, 10.0, 1.2, 0.05)
 
 tong_tinh_dau = chanh + bac_ha + vetiver
 
@@ -87,7 +117,7 @@ st.divider()
 
 st.header("3. Kết quả tính toán")
 
-nuoc_cat = 0.60
+nuoc_cat = 1.0
 ethanol = 100 - tong_tinh_dau - nuoc_cat
 
 ket_qua = {
@@ -209,6 +239,15 @@ if che_do == "💬 Chat":
                         "thân thiện, dễ hiểu và ngắn gọn. "
                         "Giải thích về hương chanh, bạc hà, cỏ hương bài "
                         "và cách lựa chọn mùi hương. "
+                    "Dữ liệu thí nghiệm của nhóm PERFUME LAB: "
+                        "Mẫu thử 1 chưa thành công vì cỏ hương bài quá nồng. "
+                        "Mẫu thử 2 thành công nhưng hương giữa chưa nổi bật. "
+                        "Mẫu B được chọn làm sản phẩm chính vì ba tầng hương cân bằng. "
+                        "Mẫu C có hương chanh hơi lấn át. "
+                        "Công thức lý thuyết mẫu B gồm 3% chanh, "
+                        "1.8% bạc hà, 1.2% cỏ hương bài, "
+                        "93% ethanol và 1% nước cất. "
+                        "Phân biệt công thức lý thuyết với số liệu pha thực tế. "
                         "Không tự khẳng định công thức pha chế an toàn "
                         "nếu chưa có dữ liệu kiểm định."
                     )
@@ -252,6 +291,15 @@ else:
                         "Bạn là trợ lý nước hoa PERFUME LAB. "
                         "Hãy trả lời bằng tiếng Việt, thân thiện, "
                         "ngắn gọn, dễ hiểu, phù hợp để đọc thành tiếng. "
+                    "Dữ liệu thí nghiệm của nhóm PERFUME LAB: "
+                        "Mẫu thử 1 chưa thành công vì cỏ hương bài quá nồng. "
+                        "Mẫu thử 2 thành công nhưng hương giữa chưa nổi bật. "
+                        "Mẫu B được chọn làm sản phẩm chính vì ba tầng hương cân bằng. "
+                        "Mẫu C có hương chanh hơi lấn át. "
+                        "Công thức lý thuyết mẫu B gồm 3% chanh, "
+                        "1.8% bạc hà, 1.2% cỏ hương bài, "
+                        "93% ethanol và 1% nước cất. "
+                        "Phân biệt công thức lý thuyết với số liệu pha thực tế. "
                         "Không khẳng định công thức pha chế an toàn "
                         "nếu chưa có dữ liệu kiểm định."
                     )
